@@ -3,20 +3,22 @@
 #include <random>
 #include "account_info.h"
 
+#define LEN 10
+
 account_info ** generateAccounts(account_info ** accounts)
 {
     std::random_device rd;
     std::mt19937 randomBalance(rd());
-    std::uniform_real_distribution<float> distr(-1000, 3000);
+    std::uniform_real_distribution<float> range(-1000, 3000);
 
     size_t id = 1000;
     float balance;
 
-    const char* names[]
+    const char* names[LEN]
             = { "Nowak", "Kowalski", "Wisniewski", "Wojcik", "Kowalczyk", "Kaminski", "Lewandowski", "Zielinski", "Szymanski","Wozniak" };
 
-    for (int i = 0; i < std::size(names); ++i) {
-        balance = distr(randomBalance);
+    for (int i = 0; i < LEN; ++i) {
+        balance = range(randomBalance);
         accounts[i] = new account_info(id++, names[i], balance);
     }
     return accounts;
@@ -24,7 +26,7 @@ account_info ** generateAccounts(account_info ** accounts)
 
 void printAccountInfo(account_info ** accounts)
 {
-    for (int i = 0; i < sizeof accounts; ++i) {
+    for (int i = 0; i < LEN; ++i) {
         std::cout << *accounts[i];
     }
 }
@@ -32,7 +34,7 @@ void printAccountInfo(account_info ** accounts)
 void catchNegativeBalanceException(account_info ** accounts)
 {
     std::string exception;
-    for (int i = 0; i < sizeof accounts; ++i) {
+    for (int i = 0; i < LEN; ++i) {
         try{
             if((accounts[i]->getBalance() < 0))
                 throw std::out_of_range(exception);
@@ -46,8 +48,7 @@ void catchNegativeBalanceException(account_info ** accounts)
 }
 int main()
 {
-    size_t n = 10;
-    auto **accounts = new account_info*[n];
+    auto **accounts = new account_info*[LEN];
 
     std::cout << std::right << std::setw(5) << "ID"
               << std::right << std::setw(15 ) << "NAME"
@@ -56,6 +57,8 @@ int main()
     generateAccounts(accounts);
     printAccountInfo(accounts);
     catchNegativeBalanceException(accounts);
+
+    delete[] accounts;
 
     return 0;
 }
